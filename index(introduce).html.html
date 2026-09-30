@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이윤혁 - 소개 페이지</title>
+    <style>
+        /* CSS 변수 설정 */
+        :root {
+            --navy-bg: #0a1128; 
+            --neon-pink: #ff2a6d; 
+            --neon-cyan: #05d9e8; 
+            --bright-bg: #fdfdfd; 
+            --text-dark: #2d3436;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            line-height: 1.6;
+            background-color: var(--bright-bg);
+        }
+
+        /* 1단: 남색 바탕 & 시부야 밤거리 네온 감성 */
+        header {
+            background-color: var(--navy-bg);
+            color: #ffffff;
+            padding: 80px 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--neon-pink);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-cyan);
+            letter-spacing: 2px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: #d1d8e0;
+            margin-bottom: 30px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .goal {
+            display: inline-block;
+            padding: 12px 25px;
+            background: rgba(255, 42, 109, 0.15);
+            border: 2px solid var(--neon-pink);
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #ffffff;
+            text-shadow: 0 0 8px var(--neon-pink);
+            box-shadow: 0 0 15px rgba(255, 42, 109, 0.4) inset, 0 0 15px rgba(255, 42, 109, 0.4);
+        }
+
+        /* 2단: 밝은 본문 영역 */
+        main {
+            background-color: var(--bright-bg);
+            color: var(--text-dark);
+            padding: 50px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        section {
+            margin-bottom: 45px;
+        }
+
+        h2 {
+            color: var(--navy-bg);
+            border-left: 5px solid var(--neon-cyan);
+            padding-left: 12px;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        /* 좋아하는 것 리스트 */
+        .likes ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .likes li {
+            background: #ffffff;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            transition: transform 0.2s;
+        }
+
+        .likes li:hover {
+            transform: translateY(-3px);
+            border-color: var(--neon-cyan);
+        }
+
+        /* 소셜 미디어 링크 (박스 형태 통일) */
+        .socials {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .link-box {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            box-shadow: 0 6px 15px rgba(220, 39, 67, 0.3);
+            transition: opacity 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .link-box::before {
+            content: '📸';
+        }
+
+        .link-box:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        /* 하단: 명함 스타일 카드 */
+        footer {
+            background-color: #f1f2f6;
+            padding: 60px 20px;
+        }
+
+        .business-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 340px;
+            margin: 0 auto;
+            padding: 35px 25px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .business-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 8px;
+            background: linear-gradient(90deg, var(--navy-bg), var(--neon-cyan));
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+        }
+
+        .business-card h3 {
+            font-size: 1.8rem;
+            color: var(--navy-bg);
+            margin-bottom: 12px;
+            letter-spacing: 3px;
+        }
+
+        .business-card p {
+            font-size: 1.1rem;
+            color: #636e72;
+            font-weight: 500;
+        }
+
+        /* 요즘 배우는 것 섹션 */
+        .learning-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed #dcdde1;
+            text-align: left;
+        }
+
+        .learning-section h4 {
+            font-size: 1rem;
+            color: var(--navy-bg);
+            margin-bottom: 10px;
+        }
+
+        .learning-section ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .learning-section li {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .learning-section li::before {
+            content: '✔️';
+            font-size: 0.8rem;
+        }
+
+        /* 박스 카운터 영역 */
+        .clap-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed #dcdde1;
+        }
+
+        .clap-btn {
+            background-color: var(--navy-bg);
+            color: #ffffff;
+            border: 2px solid var(--neon-cyan);
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(5, 217, 232, 0.2);
+        }
+
+        .clap-btn:hover {
+            background-color: var(--neon-cyan);
+            color: var(--navy-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(5, 217, 232, 0.4);
+        }
+
+        .clap-message {
+            margin-top: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--neon-pink);
+            min-height: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>이윤혁 🌃</h1>
+        <p>🎓 경영학과 3학년 | 🌟 청주대학교 새마을동아리 회장</p>
+        <div class="goal">목표 : m850i 🏎️💨</div>
+    </header>
+
+    <main>
+        <section class="likes">
+            <h2>좋아하는 것 💖</h2>
+            <ul>
+                <li>🎣 낚시</li>
+                <li>🤝 봉사</li>
+                <li>🍻 친구 만나기</li>
+            </ul>
+        </section>
+
+        <section class="socials">
+            <h2>인스타그램 연결 🔗</h2>
+            <a href="https://www.instagram.com/Look_hxxk" class="link-box" target="_blank">이윤혁 인스타 (Look_hxxk)</a>
+            <a href="https://www.instagram.com/cju.smu" class="link-box" target="_blank">청주대학교 새마을동아리 인스타 (cju.smu)</a>
+        </section>
+    </main>
+
+    <footer>
+        <div class="business-card">
+            <h3>이윤혁</h3>
+            <p>관심 분야 : 창업 💡</p>
+            
+            <div class="learning-section">
+                <h4>요즘 배우는 것 📚</h4>
+                <ul>
+                    <li>인공지능</li>
+                    <li>리더십</li>
+                    <li>경영 시뮬레이션</li>
+                </ul>
+            </div>
+
+            <!-- 박스 카운터 영역 -->
+            <div class="clap-section">
+                <button id="clapBtn" class="clap-btn">응원하기 👏</button>
+                <div id="clapMessage" class="clap-message"></div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 자바스크립트 카운터 구현 -->
+    <script>
+        let count = 0;
+        document.getElementById('clapBtn').addEventListener('click', function() {
+            count++;
+            document.getElementById('clapMessage').textContent = `박수 ${count}번 👏`;
+        });
+    </script>
+
+</body>
+</html>
