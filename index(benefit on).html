@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>혜택온 (Hyetaek-ON)</title>
+    
+    <!-- Plotly CDN 추가 -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html {
+            /* 부드러운 스크롤 이동 */
+            scroll-behavior: smooth; 
+        }
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Pretendard', 'Malgun Gothic', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* 모바일 뷰 최적화 컨테이너 */
+        .mobile-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 공통 섹션 패딩 */
+        section {
+            padding: 40px 24px;
+        }
+
+        #sticky-nav {
+            position: fixed;
+            top: 0;
+            left: 50%;
+            /* 초기 상태: 위로 숨김 처리 */
+            transform: translate(-50%, -100%);
+            width: 100%;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 52px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            z-index: 1000;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            border-bottom: 1px solid #E2E8F0;
+        }
+        /* 스크롤 업할 때 show 클래스가 붙으며 나타남 */
+        #sticky-nav.show {
+            transform: translate(-50%, 0);
+        }
+        #sticky-nav a {
+            text-decoration: none;
+            color: #1E293B;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        #sticky-nav a:active {
+            background-color: #F1F5F9;
+        }
+
+        #hero {
+            background-color: #0F172A;
+            color: #ffffff;
+            padding: 60px 24px 50px;
+            text-align: center;
+        }
+        .brand-name {
+            font-size: 14px;
+            color: #38BDF8;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+        }
+        .hero-title {
+            font-size: 26px;
+            font-weight: 800;
+            line-height: 1.35;
+            margin-bottom: 16px;
+            word-break: keep-all;
+        }
+        .hero-subtitle {
+            font-size: 15px;
+            color: #cbd5e1;
+            margin-bottom: 32px;
+            word-break: keep-all;
+        }
+
+        /* CTA 버튼 */
+        .cta-btn {
+            display: block;
+            width: 100%;
+            background-color: #3B82F6;
+            color: #ffffff;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s;
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25);
+        }
+        .cta-btn:active {
+            background-color: #2563EB;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .feature-card {
+            background-color: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 24px;
+        }
+        .feature-card h3 {
+            font-size: 18px;
+            color: #0F172A;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        .feature-card ul {
+            padding-left: 20px;
+            color: #475569;
+            font-size: 14px;
+        }
+        .feature-card li {
+            margin-bottom: 6px;
+        }
+
+        #pricing {
+            background-color: #F8FAFC;
+        }
+        .pricing-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .pricing-card {
+            background-color: #ffffff;
+            border: 2px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .pricing-card.selected {
+            border-color: #3B82F6;
+            background-color: #EFF6FF;
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.15);
+        }
+        
+        /* 라디오 버튼 UI */
+        .check-circle {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #CBD5E1;
+            background-color: #ffffff;
+            transition: all 0.2s ease;
+        }
+        .pricing-card.selected .check-circle {
+            border-color: #3B82F6;
+            background-color: #3B82F6;
+        }
+        .pricing-card.selected .check-circle::after {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 3px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .recommend-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #3B82F6;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+        .plan-name {
+            font-size: 16px;
+            color: #64748B;
+            font-weight: 600;
+            margin-bottom: 8px;
+            padding-right: 30px;
+        }
+        .pricing-card.selected .plan-name {
+            color: #1D4ED8;
+        }
+        .plan-price {
+            font-size: 24px;
+            font-weight: 800;
+            color: #0F172A;
+            margin-bottom: 16px;
+        }
+        .plan-benefit {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px dashed #CBD5E1;
+            word-break: keep-all;
+        }
+        .plan-target {
+            font-size: 13px;
+            color: #64748B;
+            display: inline-block;
+            background-color: #F1F5F9;
+            padding: 6px 10px;
+            border-radius: 8px;
+            word-break: keep-all;
+        }
+        .pricing-card.selected .plan-target {
+            background-color: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        #chart-section {
+            background-color: #ffffff;
+            border-top: 1px solid #E2E8F0;
+        }
+        .chart-header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .chart-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0F172A;
+            margin-bottom: 8px;
+            word-break: keep-all;
+        }
+        .chart-note {
+            font-size: 13px;
+            color: #64748B;
+            word-break: keep-all;
+        }
+
+        #reviews {
+            background-color: #ffffff;
+            border-top: 1px solid #E2E8F0;
+        }
+        .review-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #0F172A;
+            text-align: center;
+        }
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .review-card {
+            background-color: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .review-author {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1E293B;
+        }
+        .review-rating {
+            color: #F59E0B;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        .review-text {
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.5;
+            word-break: keep-all;
+        }
+
+        #faq {
+            background-color: #F8FAFC;
+            border-top: 1px solid #E2E8F0;
+        }
+        .faq-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: #0F172A;
+            text-align: center;
+        }
+        details {
+            background-color: #ffffff;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        summary {
+            padding: 18px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #1E293B;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        summary::-webkit-details-marker {
+            display: none;
+        }
+        summary::after {
+            content: '+';
+            font-size: 20px;
+            color: #94A3B8;
+            font-weight: 400;
+        }
+        details[open] summary::after {
+            content: '−';
+            color: #3B82F6;
+        }
+        details[open] summary {
+            color: #3B82F6;
+        }
+        .faq-answer {
+            padding: 0 20px 20px 20px;
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.6;
+            word-break: keep-all;
+        }
+
+        #bottom-cta {
+            background-color: #F8FAFC;
+            padding-top: 10px;
+            padding-bottom: 40px;
+        }
+        footer {
+            background-color: #F1F5F9;
+            padding: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: #94A3B8;
+            word-break: keep-all;
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="sticky-nav">
+        <a href="#features">특징</a>
+        <a href="#pricing">요금</a>
+        <a href="#faq">FAQ</a>
+    </nav>
+
+    <div class="mobile-container">
+        
+        <header id="hero">
+            <div class="brand-name">혜택온 (Hyetaek-ON)</div>
+            <h1 class="hero-title">매일 가는 편의점,<br>매일 아끼는 구독 — 혜택온</h1>
+            <p class="hero-subtitle">커피부터 도시락까지, 월 구독 한 번으로<br>등굣길 소비가 달라집니다.</p>
+            <button class="cta-btn" onclick="submitDemo()">지금 무료 체험 시작하기 (첫 달 0원)</button>
+        </header>
+
+        <section id="features">
+            <div class="feature-list">
+                <div class="feature-card">
+                    <h3>1. 매일 커피 구독</h3>
+                    <ul>
+                        <li>월 4,900원으로 아메리카노를 매일 1잔 40% 할인</li>
+                        <li>출근길·등교길 커피값 부담을 절반으로</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>2. 점심 도시락 구독</h3>
+                    <ul>
+                        <li>월 3,900원으로 도시락·샌드위치를 매일 1개 20% 할인</li>
+                        <li>시험 기간 식비 방어의 필수템</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <h3>3. 앱에서 3초 사용</h3>
+                    <ul>
+                        <li>결제도 사용도 앱 바코드 하나로 끝</li>
+                        <li>이번 달 아낀 금액을 앱에서 실시간 확인</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing">
+            <div class="pricing-list">
+                <!-- 커피 플랜 -->
+                <div class="pricing-card" onclick="selectPlan(this, '커피 플랜')">
+                    <div class="check-circle"></div>
+                    <div class="plan-name">커피 플랜</div>
+                    <div class="plan-price">4,900원<span style="font-size: 14px; font-weight: 400; color: #64748B;"> / 월</span></div>
+                    <div class="plan-benefit">아메리카노 매일 1잔 40% 할인</div>
+                    <div class="plan-target">추천: 매일 커피 마시는 통학러</div>
+                </div>
+                
+                <!-- 도시락 플랜 -->
+                <div class="pricing-card" onclick="selectPlan(this, '도시락 플랜')">
+                    <div class="check-circle"></div>
+                    <div class="plan-name">도시락 플랜</div>
+                    <div class="plan-price">3,900원<span style="font-size: 14px; font-weight: 400; color: #64748B;"> / 월</span></div>
+                    <div class="plan-benefit">도시락·샌드위치 매일 1개 20% 할인</div>
+                    <div class="plan-target">추천: 점심을 편의점에서 해결하는 자취생</div>
+                </div>
+
+                <!-- 올인원 플랜 (기본 선택됨) -->
+                <div class="pricing-card selected" onclick="selectPlan(this, '올인원 플랜')">
+                    <div class="recommend-badge">추천 플랜</div>
+                    <div class="check-circle"></div>
+                    <div class="plan-name">올인원 플랜</div>
+                    <div class="plan-price">7,900원<span style="font-size: 14px; font-weight: 400; color: #64748B;"> / 월</span></div>
+                    <div class="plan-benefit">커피+도시락 혜택 전부</div>
+                    <div class="plan-target">추천: 하루 두 번 이상 방문하는 헤비 유저</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="chart-section">
+            <div class="chart-header">
+                <h2 class="chart-title">월 20회 이용 시 플랜별 절약액</h2>
+                <p class="chart-note">※ 구독료를 제외한 순수 절약액 기준</p>
+            </div>
+            <!-- Plotly 차트가 렌더링될 영역 -->
+            <div id="savings-chart" style="width: 100%; height: 260px;"></div>
+        </section>
+
+        <section id="reviews">
+            <h2 class="review-title">이용자 찐 후기 👀</h2>
+            <div class="review-list">
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-author">경영학과 2학년 이**</span>
+                        <span class="review-rating">★★★★★</span>
+                    </div>
+                    <p class="review-text">"아침 1교시마다 커피 수혈 필수인데, 커피 플랜 덕분에 매일 반값으로 마셔요. 한 달 커피값 아낀 걸로 치킨 사먹었습니다! 통학러 필수템👍"</p>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-author">컴공과 3학년 김**</span>
+                        <span class="review-rating">★★★★★</span>
+                    </div>
+                    <p class="review-text">"시험기간에 편의점 도시락 달고 사는데 할인 쏠쏠해요. 무엇보다 앱 켜서 바코드 띡 찍으면 결제랑 할인이 동시에 돼서 너무 편함ㅋㅋ"</p>
+                </div>
+                <div class="review-card">
+                    <div class="review-header">
+                        <span class="review-author">디자인과 4학년 박**</span>
+                        <span class="review-rating">★★★★★</span>
+                    </div>
+                    <p class="review-text">"자취방 앞 편의점 하루에 최소 2번은 가는데 올인원 플랜 뽕 뽑고도 남습니다! 절약 리포트 보는 재미도 있고 대학생활 질이 올라간 기분이에요."</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq">
+            <h2 class="faq-title">자주 묻는 질문(FAQ)</h2>
+            
+            <details>
+                <summary>Q1. 해지는 어떻게 하나요?</summary>
+                <div class="faq-answer">
+                    A1. 앱의 '내 구독' 화면에서 버튼 한 번으로 즉시 해지됩니다. 남은 기간 혜택은 만료일까지 유지됩니다.
+                </div>
+            </details>
+            <details>
+                <summary>Q2. 할인 혜택을 하루에 여러 번 쓸 수 있나요?</summary>
+                <div class="faq-answer">
+                    A2. 플랜별로 하루 1회 사용이 원칙이며, 올인원 플랜은 커피 1회와 도시락 1회를 각각 사용할 수 있습니다.
+                </div>
+            </details>
+            <details>
+                <summary>Q3. 모든 매장에서 사용할 수 있나요?</summary>
+                <div class="faq-answer">
+                    A3. 전국 제휴 매장에서 사용 가능하며, 앱 지도에서 가까운 제휴 매장을 확인할 수 있습니다.
+                </div>
+            </details>
+            <details>
+                <summary>Q4. 구독료가 아깝지 않을까요?</summary>
+                <div class="faq-answer">
+                    A4. 커피 플랜 기준 월 4회만 사용해도 구독료 이상을 아끼게 됩니다. 앱의 '절약 리포트'가 매달 아낀 금액을 계산해 드립니다.
+                </div>
+            </details>
+        </section>
+
+        <section id="bottom-cta">
+            <button class="cta-btn" onclick="submitDemo()">지금 무료 체험 시작하기 (첫 달 0원)</button>
+        </section>
+
+        <footer>
+            혜택온은 인공지능과경영 수업 실습용 가상 서비스입니다.
+        </footer>
+    </div>
+
+    <script>
+        // 1. 위로 스크롤 시 나타나는 메뉴바 로직
+        let lastScrollY = window.scrollY;
+        const stickyNav = document.getElementById('sticky-nav');
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            
+            // 맨 위 최상단이거나, 아래로 스크롤 시 숨김
+            if (currentScrollY <= 50 || currentScrollY > lastScrollY) {
+                stickyNav.classList.remove('show');
+            } 
+            // 위로 스크롤 시 보여줌
+            else if (currentScrollY < lastScrollY) {
+                stickyNav.classList.add('show');
+            }
+            lastScrollY = currentScrollY;
+        });
+
+        // 2. 플랜 선택 기능 및 알림 기능
+        let currentPlan = '올인원 플랜';
+
+        function selectPlan(element, planName) {
+            const cards = document.querySelectorAll('.pricing-card');
+            cards.forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+            currentPlan = planName;
+        }
+
+        function submitDemo() {
+            alert('신청 접수(데모)\n선택하신 상품: [' + currentPlan + ']');
+        }
+
+        // 3. Plotly 차트 렌더링 로직 (신규 데이터 반영)
+        document.addEventListener('DOMContentLoaded', function() {
+            // 변경된 순수 절약액 데이터 적용 (11100, 16100, 28100)
+            const trace = {
+                x: ['커피 플랜', '도시락 플랜', '올인원 플랜'],
+                y: [11100, 16100, 28100],
+                type: 'bar',
+                text: ['11,100원', '16,100원', '28,100원'],
+                textposition: 'auto',
+                hoverinfo: 'none',
+                marker: {
+                    color: ['#93C5FD', '#60A5FA', '#3B82F6'], // 블루톤 그라데이션
+                }
+            };
+
+            const layout = {
+                margin: { t: 20, b: 30, l: 0, r: 0 },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                xaxis: { 
+                    fixedrange: true, 
+                    tickfont: { size: 13, color: '#475569', family: 'Pretendard, sans-serif' }
+                },
+                yaxis: { 
+                    fixedrange: true, 
+                    showgrid: false, 
+                    visible: false // y축 숫자는 숨기고 막대 텍스트로만 표시
+                },
+                font: { 
+                    family: "'Apple SD Gothic Neo', 'Pretendard', sans-serif" 
+                },
+                dragmode: false // 모바일 확대/축소 방지
+            };
+
+            const config = { 
+                responsive: true, 
+                displayModeBar: false // 상단 툴바 숨김
+            };
+
+            Plotly.newPlot('savings-chart', [trace], layout, config);
+        });
+    </script>
+</body>
+</html>
